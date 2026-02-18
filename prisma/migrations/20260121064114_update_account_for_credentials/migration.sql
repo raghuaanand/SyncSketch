@@ -1,0 +1,13 @@
+/*
+  Warnings:
+
+  - Added the required column `updatedAt` to the `Account` table without a default value. This is not possible if the table is not empty.
+
+*/
+-- AlterTable
+ALTER TABLE "Account" ADD COLUMN     "accountId" TEXT,
+ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "password" TEXT,
+ADD COLUMN     "providerId" TEXT,
+ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL,
+ALTER COLUMN "type" SET DEFAULT 'oauth';

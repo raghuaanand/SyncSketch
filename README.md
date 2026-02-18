@@ -1,37 +1,36 @@
-# Welcome to SyncSketch - Your Collaborative Drawing Canvas!
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-**SyncSketch** is a free and open-source online whiteboard tool that lets you easily create diagrams, flowcharts, mind maps, and more. It's designed to be simple, intuitive, and perfect for collaborative work.
+## Getting Started
 
-**Key Features:**
+First, run the development server:
 
-* **Real-time Collaboration:** Work together with your team seamlessly. See changes made by others instantly and collaborate in real-time.
-* **Versatile Drawing Tools:**  Enjoy a wide range of drawing tools, including pens, markers, shapes, lines, and text boxes.
-* **Easy Sharing:** Quickly share your drawings with others via a simple link. 
-* **Export Options:** Export your creations in various formats like PNG, SVG, and PDF.
-* **Clean and Minimal Interface:** Focus on your work with a distraction-free and intuitive interface.
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-**Getting Started:**
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-1. **[Link to your project (e.g., GitHub repository)]**
-2. **[Link to live demo (if available)]**
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-**Contributing:**
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-We welcome contributions from the community! Whether you're a developer, designer, or just have ideas to share, we encourage you to get involved.
+## Learn More
 
-* **Report Issues:** Find and report bugs or suggest new features on our [GitHub Issues page](your-github-issues-link).
-* **Contribute Code:** Fork the repository, make your changes, and submit a pull request.
-* **Spread the Word:** Share [Your Project Name] with your friends, colleagues, and on social media.
+To learn more about Next.js, take a look at the following resources:
 
-**Join the Community:**
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-* **[Link to Discord server (if you have one)]**
-* **[Link to Twitter account (if you have one)]** 
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
+## Deploy on Vercel
 
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-**Let's build something amazing together!**
-
-We believe that collaborative drawing tools can empower teams and individuals to be more creative and productive. Join us on this journey and help us make SyncSketch even better.
-
-**[Optional: Include a screenshot or GIF of your project in action]**
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
