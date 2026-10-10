@@ -7,22 +7,26 @@ import { useQuery } from "@tanstack/react-query";
 import { MoveLeftIcon } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { LogoMark } from "@/components/logo";
+import { useTheme } from "@/components/theme-provider";
 import { api, type SceneData } from "@/lib/api-client";
 
 const SAVE_DELAY_MS = 1000;
 
 type SaveStatus = "saved" | "saving" | "error";
 
-function Centered({ children }: { children: React.ReactNode }) {
+function Centered({ children, pulse }: { children: React.ReactNode; pulse?: boolean }) {
   return (
-    <div className="flex h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 text-slate-600 dark:from-slate-900 dark:to-slate-800 dark:text-slate-300">
-      {children}
+    <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+      <LogoMark className={pulse ? "size-12 animate-pulse" : "size-12"} />
+      <p className="font-serif text-xl text-muted-foreground">{children}</p>
     </div>
   );
 }
 
 function Editor() {
   const router = useRouter();
+  const { isDarkMode, setTheme } = useTheme();
   const { boardId } = useParams<{ boardId: string }>();
   const [excalidrawApi, setExcalidrawApi] = useState<ExcalidrawImperativeAPI>();
   const [status, setStatus] = useState<SaveStatus>("saved");
@@ -99,7 +103,7 @@ function Editor() {
     return <Centered>{error.message}</Centered>;
   }
   if (!board) {
-    return <Centered>Loading your scene...</Centered>;
+    return <Centered pulse>Opening your board</Centered>;
   }
 
   const goBack = async () => {
@@ -108,9 +112,10 @@ function Editor() {
   };
 
   return (
-    <div className="h-screen bg-white dark:bg-slate-900">
+    <div className="h-screen bg-background">
       <Excalidraw
         onChange={onChange}
+        theme={isDarkMode ? "dark" : "light"}
         excalidrawAPI={(api) => setExcalidrawApi(api)}
         initialData={
           board.data
@@ -124,26 +129,31 @@ function Editor() {
       >
         <MainMenu>
           <MainMenu.Item
-            icon={<MoveLeftIcon className="text-slate-600 dark:text-slate-300" />}
+            icon={<MoveLeftIcon />}
             onSelect={goBack}
           >
             Back to boards
           </MainMenu.Item>
           <MainMenu.DefaultItems.SaveAsImage />
           <MainMenu.DefaultItems.ClearCanvas />
-          <MainMenu.DefaultItems.ToggleTheme />
+          <MainMenu.DefaultItems.ToggleTheme onSelect={(theme) => setTheme(theme)} />
           <MainMenu.DefaultItems.ChangeCanvasBackground />
         </MainMenu>
       </Excalidraw>
       <div
-        className="pointer-events-none fixed bottom-3 left-1/2 z-50 -translate-x-1/2 rounded-full bg-white/90 px-3 py-1 text-xs shadow dark:bg-slate-800/90 dark:text-slate-200"
+        className="pointer-events-none fixed bottom-4 left-1/2 z-50 flex max-w-[90vw] -translate-x-1/2 items-center gap-2 rounded-full border bg-card px-3 py-1.5 text-xs text-card-foreground shadow-md"
         role="status"
       >
-        {status === "saving" && "Saving..."}
-        {status === "saved" && `${board.name} · Saved`}
-        {status === "error" && (
-          <span className="text-red-600">Not saved: {saveError}</span>
-        )}
+        <span
+          className={`size-2 shrink-0 rounded-full ${
+            status === "saved" ? "bg-success" : status === "saving" ? "animate-pulse bg-primary" : "bg-destructive"
+          }`}
+        />
+        <span className="truncate">
+          {status === "saving" && "Saving..."}
+          {status === "saved" && `${board.name} · Saved`}
+          {status === "error" && `Not saved: ${saveError}`}
+        </span>
       </div>
     </div>
   );

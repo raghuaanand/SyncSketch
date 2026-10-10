@@ -2,50 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  SyncSketch palette: warm paper and charcoal neutrals, a clay accent for
+  actions, kraft for folders and olive for "saved/ok" states.
+*/
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 48 33% 97%;
+    --foreground: 60 3% 9%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 60 3% 9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
+    --popover-foreground: 60 3% 9%;
+    --primary: 15 57% 47%;
+    --primary-foreground: 48 33% 97%;
+    --secondary: 48 22% 91%;
+    --secondary-foreground: 60 3% 12%;
+    --muted: 48 22% 93%;
+    --muted-foreground: 50 5% 38%;
+    --accent: 48 22% 91%;
+    --accent-foreground: 60 3% 12%;
+    --destructive: 4 62% 45%;
+    --destructive-foreground: 48 33% 97%;
+    --border: 48 17% 86%;
+    --input: 48 15% 80%;
+    --ring: 15 57% 47%;
+    --radius: 0.625rem;
+
+    --kraft: 27 47% 62%;
+    --success: 80 26% 36%;
+    --panel: 30 4% 12%;
+    --panel-foreground: 48 33% 95%;
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 40 4% 10%;
+    --foreground: 48 25% 94%;
+    --card: 40 4% 13%;
+    --card-foreground: 48 25% 94%;
+    --popover: 40 4% 13%;
+    --popover-foreground: 48 25% 94%;
+    --primary: 15 60% 58%;
+    --primary-foreground: 40 4% 8%;
+    --secondary: 40 4% 18%;
+    --secondary-foreground: 48 25% 94%;
+    --muted: 40 4% 16%;
+    --muted-foreground: 45 8% 66%;
+    --accent: 40 4% 19%;
+    --accent-foreground: 48 25% 94%;
+    --destructive: 4 65% 55%;
+    --destructive-foreground: 40 4% 8%;
+    --border: 40 4% 22%;
+    --input: 40 4% 27%;
+    --ring: 15 60% 58%;
+
+    --kraft: 27 40% 62%;
+    --success: 80 24% 58%;
+    --panel: 40 4% 7%;
+    --panel-foreground: 48 25% 94%;
   }
 }
 
@@ -54,72 +68,17 @@
     @apply border-border;
   }
   body {
-    @apply font-inter bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
+  }
+  ::selection {
+    background: hsl(var(--primary) / 0.25);
   }
 }
 
 @layer utilities {
-  /* Custom scrollbar */
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Gradient animations */
-  .animate-gradient {
-    background-size: 200% 200%;
-    animation: gradient 3s ease infinite;
-  }
-
-  @keyframes gradient {
-    0% {
-      background-position: 0% 50%;
-    }
-    50% {
-      background-position: 100% 50%;
-    }
-    100% {
-      background-position: 0% 50%;
-    }
-  }
-
-  /* Enhanced hover effects */
-  .hover-lift {
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  }
-
-  .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 10px 10px -5px rgb(0 0 0 / 0.04);
-  }
-
-  /* Glass morphism effect */
-  .glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .glass-dark {
-    background: rgba(0, 0, 0, 0.1);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }
-
-  /* Smooth focus ring */
-  .focus-ring {
-    @apply focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-slate-900;
-  }
-
-  /* Custom button gradients */
-  .btn-primary {
-    @apply bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white shadow-lg hover:shadow-xl transition-all duration-300;
-  }
-
-  .btn-secondary {
-    @apply bg-gradient-to-r from-slate-100 to-slate-200 hover:from-slate-200 hover:to-slate-300 dark:from-slate-700 dark:to-slate-800 dark:hover:from-slate-600 dark:hover:to-slate-700 border border-slate-300 dark:border-slate-600 transition-all duration-300;
+  /* Dotted canvas, echoing the whiteboard, used for board previews. */
+  .canvas-dots {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.14) 1px, transparent 1px);
+    background-size: 14px 14px;
   }
 }

@@ -1,11 +1,4 @@
-import { Palette } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Wordmark } from "@/components/logo";
 
 export function AuthShell({
   title,
@@ -17,24 +10,45 @@ export function AuthShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="min-h-screen flex items-center justify-center px-4 bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700">
-      <div className="w-full max-w-md space-y-6">
-        <div className="flex items-center justify-center gap-3">
-          <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
-            <Palette className="w-5 h-5 text-white" />
-          </div>
-          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-            SyncSketch
-          </h1>
+    <div className="grid min-h-screen lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
+      <aside className="relative hidden flex-col overflow-hidden bg-panel p-12 text-panel-foreground lg:flex">
+        <Wordmark />
+        <div className="relative z-10 mt-[16vh] max-w-md space-y-5">
+          <h2 className="font-serif text-5xl font-normal leading-[1.1] tracking-tight">
+            Give your rough ideas <em className="text-kraft">room to breathe.</em>
+          </h2>
+          <p className="text-base leading-relaxed text-panel-foreground/70">
+            Sketch, diagram and think out loud on an infinite canvas. Keep every board
+            organised in folders, saved as you draw.
+          </p>
         </div>
-        <Card>
-          <CardHeader>
-            <CardTitle>{title}</CardTitle>
-            <CardDescription>{description}</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">{children}</CardContent>
-        </Card>
-      </div>
+        <svg
+          viewBox="0 0 400 300"
+          className="pointer-events-none absolute -bottom-4 -right-8 w-[32rem]"
+          fill="none"
+          aria-hidden="true"
+        >
+          <path
+            d="M20 230c40-90 90-150 140-130s-30 110 40 110 90-90 180-150"
+            stroke="hsl(var(--primary))"
+            strokeWidth="5"
+            strokeLinecap="round"
+          />
+          <rect x="70" y="60" width="110" height="70" rx="10" stroke="hsl(var(--kraft))" strokeWidth="3" strokeDasharray="2 9" strokeLinecap="round" />
+          <circle cx="300" cy="90" r="34" stroke="hsl(var(--panel-foreground) / 0.5)" strokeWidth="3" strokeLinecap="round" strokeDasharray="1 10" />
+        </svg>
+      </aside>
+
+      <main className="flex items-center justify-center px-6 py-12">
+        <div className="w-full max-w-sm space-y-8">
+          <Wordmark className="lg:hidden" />
+          <div className="space-y-2">
+            <h1 className="font-serif text-4xl font-medium tracking-tight">{title}</h1>
+            <p className="text-muted-foreground">{description}</p>
+          </div>
+          <div className="space-y-5">{children}</div>
+        </div>
+      </main>
     </div>
   );
 }
@@ -42,7 +56,10 @@ export function AuthShell({
 export function FormError({ message }: { message?: string }) {
   if (!message) return null;
   return (
-    <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+    <p
+      role="alert"
+      className="rounded-md border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive"
+    >
       {message}
     </p>
   );

@@ -3,11 +3,11 @@ import { QueryProvider } from "@/components/query-provider";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import "@fontsource-variable/inter";
+import "@fontsource-variable/newsreader";
 
 export const metadata: Metadata = {
   title: "SyncSketch",
   description: "A collaborative drawing canvas",
-  icons: { icon: "/pwa-assets/Excalidraw-pp.svg" },
 };
 
 export default function RootLayout({

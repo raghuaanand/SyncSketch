@@ -59,7 +59,7 @@ function VerifyForm() {
   if (!email) {
     return (
       <AuthShell title="Verify your email" description="No email to verify.">
-        <Link href="/signup" className="underline text-sm">
+        <Link href="/signup" className="text-sm font-medium text-primary underline-offset-4 hover:underline">
           Back to sign up
         </Link>
       </AuthShell>
@@ -83,14 +83,14 @@ function VerifyForm() {
             required
             value={otp}
             onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
-            className="text-center text-xl tracking-[0.5em]"
+            className="h-14 text-center font-mono text-2xl tracking-[0.6em]"
           />
         </div>
         <FormError message={error} />
         {info && <p className="text-sm text-muted-foreground">{info}</p>}
         <Button
           type="submit"
-          className="w-full"
+          className="h-11 w-full"
           disabled={pending || otp.length !== 6}
         >
           {pending ? "Verifying..." : "Verify"}

@@ -59,7 +59,7 @@ export function ItemMenu({ kind, id, name, parentId, onRename, onMove, onDelete,
             </DropdownMenuItem>
           )}
           <DropdownMenuItem
-            className="text-red-600 dark:text-red-400"
+            className="text-destructive"
             onSelect={() => setDialog("delete")}
           >
             <Trash2 className="mr-2 size-4" /> Delete
@@ -95,7 +95,7 @@ export function ItemMenu({ kind, id, name, parentId, onRename, onMove, onDelete,
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              className="bg-red-600 hover:bg-red-700 text-white"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
               onClick={() => void onDelete()}
             >
               Delete

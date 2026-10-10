@@ -2,14 +2,12 @@
 
 import {
   ChevronRight,
-  FilePlus,
   FolderPlus,
-  Grid,
-  Home,
+  LayoutGrid,
   List,
   LogOut,
   Moon,
-  Palette,
+  Plus,
   Search,
   Sun,
 } from "lucide-react";
@@ -18,9 +16,11 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { NameDialog } from "@/components/name-dialog";
 import { useTheme } from "@/components/theme-provider";
-import { BoardTile, FolderTile } from "@/components/tiles";
+import { Wordmark } from "@/components/logo";
+import { BoardTile, FolderTile, type View } from "@/components/tiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { FormError } from "@/components/auth/auth-shell";
 import { SkeletonCard } from "@/components/ui/loading";
 import { signOut } from "@/lib/auth-client";
 import { useCreateBoard, useCreateFolder, useItems } from "@/lib/queries";
@@ -33,31 +33,31 @@ export function Dashboard({ parentId }: { parentId: string | null }) {
   const createFolder = useCreateFolder();
   const createBoard = useCreateBoard();
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<"grid" | "list">("grid");
+  const [view, setView] = useState<View>("grid");
   const [dialog, setDialog] = useState<"folder" | "board" | null>(null);
 
   const q = search.toLowerCase();
   const folders = data?.folders.filter((f) => f.name.toLowerCase().includes(q)) ?? [];
   const boards = data?.boards.filter((b) => b.name.toLowerCase().includes(q)) ?? [];
   const isEmpty = !!data && data.folders.length === 0 && data.boards.length === 0;
-  const layout =
+  const boardLayout =
     view === "grid"
-      ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
-      : "flex flex-col gap-3";
+      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      : "flex flex-col gap-2";
+  const folderLayout =
+    view === "grid"
+      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+      : "flex flex-col gap-2";
+  const title = data?.path.length ? data.path[data.path.length - 1].name : "All boards";
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100 dark:from-slate-900 dark:via-slate-800 dark:to-slate-700">
-      <nav className="sticky top-0 z-50 border-b border-white/20 bg-white/80 shadow-lg backdrop-blur-xl dark:bg-slate-900/80">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4 lg:px-6">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 shadow-lg">
-              <Palette className="size-5 text-white" />
-            </div>
-            <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-xl font-bold text-transparent">
-              SyncSketch
-            </h1>
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+          <Link href="/" aria-label="SyncSketch home">
+            <Wordmark />
           </Link>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <Button variant="ghost" size="icon" onClick={toggleDarkMode} aria-label="Toggle theme">
               {isDarkMode ? <Sun className="size-5" /> : <Moon className="size-5" />}
             </Button>
@@ -76,110 +76,117 @@ export function Dashboard({ parentId }: { parentId: string | null }) {
             </Button>
           </div>
         </div>
-      </nav>
+      </header>
 
-      <main className="container mx-auto space-y-6 px-4 py-8 lg:px-6">
-        <div className="flex flex-wrap items-center gap-1 text-sm text-slate-600 dark:text-slate-300">
-          <Link href="/" className="flex items-center gap-1 hover:underline">
-            <Home className="size-4" /> All boards
-          </Link>
-          {data?.path.map((f, i) => (
-            <span key={f.id} className="flex items-center gap-1">
-              <ChevronRight className="size-3" />
-              {i === data.path.length - 1 ? (
-                <span className="font-semibold">{f.name}</span>
-              ) : (
-                <Link href={`/folder/${f.id}`} className="hover:underline">
-                  {f.name}
-                </Link>
-              )}
-            </span>
-          ))}
+      <main className="mx-auto max-w-6xl space-y-8 px-4 py-10 sm:px-6">
+        <div className="space-y-4">
+          {!!data?.path.length && (
+            <nav aria-label="Breadcrumb" className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+              <Link href="/" className="hover:text-foreground hover:underline">
+                All boards
+              </Link>
+              {data.path.slice(0, -1).map((f) => (
+                <span key={f.id} className="flex items-center gap-1">
+                  <ChevronRight className="size-3.5" />
+                  <Link href={`/folder/${f.id}`} className="hover:text-foreground hover:underline">
+                    {f.name}
+                  </Link>
+                </span>
+              ))}
+            </nav>
+          )}
+          <div className="flex flex-wrap items-end justify-between gap-4">
+            <h1 className="font-serif text-4xl font-medium tracking-tight sm:text-5xl">{title}</h1>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => setDialog("folder")}>
+                <FolderPlus className="mr-2 size-4" /> New folder
+              </Button>
+              <Button onClick={() => setDialog("board")}>
+                <Plus className="mr-2 size-4" /> New board
+              </Button>
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={() => setDialog("folder")}>
-              <FolderPlus className="mr-2 size-4" /> New folder
-            </Button>
-            <Button
-              className="bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:from-blue-700 hover:to-purple-700"
-              onClick={() => setDialog("board")}
-            >
-              <FilePlus className="mr-2 size-4" /> New board
-            </Button>
+        <div className="flex gap-2">
+          <div className="relative flex-1 sm:max-w-xs">
+            <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search this folder"
+              aria-label="Search this folder"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="pl-9"
+            />
           </div>
-          <div className="flex gap-2">
-            <div className="relative flex-1 lg:w-64">
-              <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate-400" />
-              <Input
-                placeholder="Search this folder..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Button
-              variant={view === "grid" ? "default" : "outline"}
-              size="icon"
-              aria-label="Grid view"
-              onClick={() => setView("grid")}
-            >
-              <Grid className="size-4" />
-            </Button>
-            <Button
-              variant={view === "list" ? "default" : "outline"}
-              size="icon"
-              aria-label="List view"
-              onClick={() => setView("list")}
-            >
-              <List className="size-4" />
-            </Button>
+          <div className="ml-auto flex rounded-md border bg-card p-0.5">
+            {(["grid", "list"] as const).map((v) => (
+              <Button
+                key={v}
+                variant="ghost"
+                size="icon"
+                className={`size-9 ${view === v ? "bg-secondary text-foreground" : "text-muted-foreground"}`}
+                aria-label={v === "grid" ? "Grid view" : "List view"}
+                aria-pressed={view === v}
+                onClick={() => setView(v)}
+              >
+                {v === "grid" ? <LayoutGrid className="size-4" /> : <List className="size-4" />}
+              </Button>
+            ))}
           </div>
         </div>
 
         {error && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
-            {error.message}{" "}
-            <Link href="/" className="underline">
+          <div className="space-y-2">
+            <FormError message={error.message} />
+            <Link href="/" className="text-sm font-medium text-primary hover:underline">
               Back to all boards
             </Link>
-          </p>
+          </div>
         )}
         {isLoading && (
-          <div className={layout}>
-            {Array.from({ length: 6 }).map((_, i) => (
+          <div className={boardLayout}>
+            {Array.from({ length: 4 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
           </div>
         )}
         {isEmpty && (
-          <p className="py-16 text-center text-slate-500 dark:text-slate-400">
-            This folder is empty. Create a folder or a board to get started.
-          </p>
+          <div className="flex flex-col items-center rounded-xl border border-dashed py-20 text-center">
+            <svg viewBox="0 0 120 60" className="mb-6 w-28 text-primary" fill="none" aria-hidden="true">
+              <path d="M6 44c14-30 28-40 40-34s-8 34 8 34 30-26 60-34" stroke="currentColor" strokeWidth="3.5" strokeLinecap="round" />
+            </svg>
+            <h2 className="font-serif text-3xl font-medium">A blank canvas</h2>
+            <p className="mt-2 max-w-sm text-muted-foreground">
+              Start a board for your next idea, or make a folder to keep related work together.
+            </p>
+            <Button className="mt-6" onClick={() => setDialog("board")}>
+              <Plus className="mr-2 size-4" /> New board
+            </Button>
+          </div>
         )}
         {folders.length > 0 && (
           <section className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Folders</h2>
-            <div className={layout}>
+            <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Folders</h2>
+            <div className={folderLayout}>
               {folders.map((f) => (
-                <FolderTile key={f.id} folder={f} />
+                <FolderTile key={f.id} folder={f} view={view} />
               ))}
             </div>
           </section>
         )}
         {boards.length > 0 && (
           <section className="space-y-3">
-            <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Boards</h2>
-            <div className={layout}>
+            <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Boards</h2>
+            <div className={boardLayout}>
               {boards.map((b) => (
-                <BoardTile key={b.id} board={b} />
+                <BoardTile key={b.id} board={b} view={view} />
               ))}
             </div>
           </section>
         )}
         {data && !isEmpty && folders.length === 0 && boards.length === 0 && (
-          <p className="py-12 text-center text-slate-500">Nothing matches your search.</p>
+          <p className="py-12 text-center text-muted-foreground">Nothing matches your search.</p>
         )}
       </main>
 

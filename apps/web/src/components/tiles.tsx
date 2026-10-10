@@ -1,9 +1,10 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
-import { Folder, Pencil } from "lucide-react";
+import { Folder, PenLine } from "lucide-react";
 import Link from "next/link";
 import type { BoardItem, FolderItem } from "@/lib/api-client";
+import { cn } from "@/lib/utils";
 import {
   useDeleteBoard,
   useDeleteFolder,
@@ -13,53 +14,56 @@ import {
 } from "@/lib/queries";
 import { ItemMenu } from "./item-menu";
 
-const tileClass =
-  "group flex items-center gap-3 rounded-lg border border-slate-200/50 dark:border-slate-700/50 bg-white/90 dark:bg-slate-800/90 p-4 shadow-md transition hover:-translate-y-0.5 hover:border-blue-300/60 hover:shadow-xl";
+export type View = "grid" | "list";
 
-export function FolderTile({ folder }: { folder: FolderItem }) {
+const card =
+  "group relative rounded-xl border bg-card transition-colors hover:border-primary/50";
+
+const ago = (iso: string) => formatDistanceToNow(new Date(iso), { addSuffix: true });
+
+export function FolderTile({ folder, view }: { folder: FolderItem; view: View }) {
   const update = useUpdateFolder();
   const remove = useDeleteFolder();
   return (
-    <div className={tileClass}>
-      <Link href={`/folder/${folder.id}`} className="flex min-w-0 flex-1 items-center gap-3">
-        <Folder className="size-8 shrink-0 text-blue-600 dark:text-blue-400" />
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-slate-800 dark:text-slate-100">{folder.name}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Updated {formatDistanceToNow(new Date(folder.updatedAt), { addSuffix: true })}
-          </p>
-        </div>
+    <div className={cn(card, "flex items-center gap-3 p-3 pr-2")}>
+      <Link
+        href={`/folder/${folder.id}`}
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-lg after:absolute after:inset-0 after:content-['']"
+      >
+        <span className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-kraft/20 text-kraft">
+          <Folder className="size-5 fill-current" />
+        </span>
+        <span className="min-w-0">
+          <span className="block truncate font-medium">{folder.name}</span>
+          {view === "list" && (
+            <span className="block text-xs text-muted-foreground">
+              Updated {ago(folder.updatedAt)}
+            </span>
+          )}
+        </span>
       </Link>
-      <ItemMenu
-        kind="folder"
-        id={folder.id}
-        name={folder.name}
-        parentId={folder.parentId}
-        onRename={(name) => update.mutateAsync({ id: folder.id, name })}
-        onMove={(parentId) => update.mutateAsync({ id: folder.id, parentId })}
-        onDelete={() => remove.mutateAsync(folder.id)}
-      />
+      <div className="relative z-10">
+        <ItemMenu
+          kind="folder"
+          id={folder.id}
+          name={folder.name}
+          parentId={folder.parentId}
+          onRename={(name) => update.mutateAsync({ id: folder.id, name })}
+          onMove={(parentId) => update.mutateAsync({ id: folder.id, parentId })}
+          onDelete={() => remove.mutateAsync(folder.id)}
+        />
+      </div>
     </div>
   );
 }
 
-export function BoardTile({ board }: { board: BoardItem }) {
+export function BoardTile({ board, view }: { board: BoardItem; view: View }) {
   const update = useUpdateBoardMeta();
   const duplicate = useDuplicateBoard();
   const remove = useDeleteBoard();
-  return (
-    <div className={tileClass}>
-      <Link href={`/board/${board.id}`} className="flex min-w-0 flex-1 items-center gap-3">
-        <div className="flex size-10 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/30 dark:to-purple-900/30">
-          <Pencil className="size-5 text-slate-500 group-hover:text-blue-500" />
-        </div>
-        <div className="min-w-0">
-          <p className="truncate font-semibold text-slate-800 dark:text-slate-100">{board.name}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Edited {formatDistanceToNow(new Date(board.updatedAt), { addSuffix: true })}
-          </p>
-        </div>
-      </Link>
+
+  const menu = (
+    <div className="relative z-10">
       <ItemMenu
         kind="board"
         id={board.id}
@@ -70,6 +74,47 @@ export function BoardTile({ board }: { board: BoardItem }) {
         onDuplicate={() => duplicate.mutateAsync(board.id)}
         onDelete={() => remove.mutateAsync(board.id)}
       />
+    </div>
+  );
+
+  if (view === "list") {
+    return (
+      <div className={cn(card, "flex items-center gap-3 p-3 pr-2")}>
+        <Link
+          href={`/board/${board.id}`}
+          className="flex min-w-0 flex-1 items-center gap-3 after:absolute after:inset-0 after:content-['']"
+        >
+          <span className="canvas-dots flex size-10 shrink-0 items-center justify-center rounded-lg border bg-background text-primary">
+            <PenLine className="size-4" />
+          </span>
+          <span className="min-w-0">
+            <span className="block truncate font-medium">{board.name}</span>
+            <span className="block text-xs text-muted-foreground">Edited {ago(board.updatedAt)}</span>
+          </span>
+        </Link>
+        {menu}
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn(card, "overflow-hidden")}>
+      <Link
+        href={`/board/${board.id}`}
+        className="block after:absolute after:inset-0 after:content-['']"
+        aria-label={`Open ${board.name}`}
+      >
+        <div className="canvas-dots flex h-32 items-center justify-center border-b bg-background">
+          <PenLine className="size-6 text-primary/70 transition-transform group-hover:-rotate-6 group-hover:scale-110" />
+        </div>
+      </Link>
+      <div className="flex items-center gap-2 p-3 pr-2">
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-medium">{board.name}</p>
+          <p className="text-xs text-muted-foreground">Edited {ago(board.updatedAt)}</p>
+        </div>
+        {menu}
+      </div>
     </div>
   );
 }

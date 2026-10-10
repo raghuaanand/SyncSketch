@@ -12,7 +12,8 @@ module.exports = {
   prefix: "",
   theme: {
     fontFamily: {
-      inter: ["Inter Variable", "sans-serif"],
+      sans: ["Inter Variable", "system-ui", "sans-serif"],
+      serif: ["Newsreader Variable", "Georgia", "serif"],
     },
 
     container: {
@@ -56,6 +57,12 @@ module.exports = {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+        },
+        kraft: "hsl(var(--kraft))",
+        success: "hsl(var(--success))",
+        panel: {
+          DEFAULT: "hsl(var(--panel))",
+          foreground: "hsl(var(--panel-foreground))",
         },
       },
       borderRadius: {

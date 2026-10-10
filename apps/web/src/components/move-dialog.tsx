@@ -96,7 +96,7 @@ export function MoveDialog({
                 className="flex w-full items-center gap-2 p-3 text-left text-sm hover:bg-accent"
                 onClick={() => setLocation(f.id)}
               >
-                <Folder className="size-4 text-blue-600" />
+                <Folder className="size-4 text-kraft" />
                 <span className="truncate">{f.name}</span>
                 <ChevronRight className="ml-auto size-4 text-muted-foreground" />
               </button>
@@ -107,7 +107,7 @@ export function MoveDialog({
         </div>
 
         {error && (
-          <p role="alert" className="text-sm text-red-600 dark:text-red-400">
+          <p role="alert" className="text-sm text-destructive">
             {error}
           </p>
         )}

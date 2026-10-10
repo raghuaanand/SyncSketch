@@ -64,13 +64,13 @@ export default function LoginPage() {
           />
         </div>
         <FormError message={error} />
-        <Button type="submit" className="w-full" disabled={pending}>
+        <Button type="submit" className="h-11 w-full" disabled={pending}>
           {pending ? "Signing in..." : "Sign in"}
         </Button>
       </form>
-      <p className="text-sm text-center text-muted-foreground">
+      <p className="text-center text-sm text-muted-foreground">
         No account?{" "}
-        <Link href="/signup" className="underline">
+        <Link href="/signup" className="font-medium text-primary underline-offset-4 hover:underline">
           Sign up
         </Link>
       </p>

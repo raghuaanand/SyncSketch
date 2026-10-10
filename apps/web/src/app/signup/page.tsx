@@ -76,13 +76,13 @@ export default function SignupPage() {
           <p className="text-xs text-muted-foreground">At least 8 characters.</p>
         </div>
         <FormError message={error} />
-        <Button type="submit" className="w-full" disabled={pending}>
+        <Button type="submit" className="h-11 w-full" disabled={pending}>
           {pending ? "Creating account..." : "Create account"}
         </Button>
       </form>
-      <p className="text-sm text-center text-muted-foreground">
+      <p className="text-center text-sm text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="underline">
+        <Link href="/login" className="font-medium text-primary underline-offset-4 hover:underline">
           Sign in
         </Link>
       </p>
