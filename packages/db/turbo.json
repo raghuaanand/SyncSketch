@@ -1,0 +1,6 @@
+{
+  "extends": ["//"],
+  "tasks": {
+    "build": { "outputs": [], "env": ["DATABASE_URL", "DIRECT_URL"] }
+  }
+}
