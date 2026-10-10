@@ -1,37 +1,33 @@
-# Welcome to SyncSketch - Your Collaborative Drawing Canvas!
+# SyncSketch
 
-**SyncSketch** is a free and open-source online whiteboard tool that lets you easily create diagrams, flowcharts, mind maps, and more. It's designed to be simple, intuitive, and perfect for collaborative work.
+A whiteboard app built on [Excalidraw](https://excalidraw.com). Sign in with Google or email (verified with a one-time code), organise boards in nested folders, and everything is stored in Postgres.
 
-**Key Features:**
+## Stack
+- Turborepo + pnpm monorepo
+- `apps/web`: Next.js 14 (App Router) UI and API route handlers, Better Auth, TanStack Query, Tailwind/shadcn-style components
+- `packages/db`: Prisma schema, migrations and client (`@syncsketch/db`)
 
-* **Real-time Collaboration:** Work together with your team seamlessly. See changes made by others instantly and collaborate in real-time.
-* **Versatile Drawing Tools:**  Enjoy a wide range of drawing tools, including pens, markers, shapes, lines, and text boxes.
-* **Easy Sharing:** Quickly share your drawings with others via a simple link. 
-* **Export Options:** Export your creations in various formats like PNG, SVG, and PDF.
-* **Clean and Minimal Interface:** Focus on your work with a distraction-free and intuitive interface.
+## Getting started
+Requires Node 20+, pnpm and a Postgres database.
 
-**Getting Started:**
+```bash
+pnpm install
+cp apps/web/.env.example apps/web/.env.local     # fill in values
+cp packages/db/.env.example packages/db/.env     # DATABASE_URL / DIRECT_URL for Prisma CLI
+pnpm --filter @syncsketch/db db:migrate          # create tables
+pnpm dev                                         # http://localhost:3000
+```
 
-1. **[Link to your project (e.g., GitHub repository)]**
-2. **[Link to live demo (if available)]**
+Without `RESEND_API_KEY`, verification codes are printed in the dev server console. Google sign-in is available only when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set.
 
-**Contributing:**
+## Commands
+| Command | What it does |
+| --- | --- |
+| `pnpm dev` | start the web app |
+| `pnpm build` | generate the Prisma client and build everything |
+| `pnpm lint` | ESLint for `apps/web`, type-check for `packages/db` |
+| `pnpm --filter @syncsketch/db db:migrate` | create/apply a migration in development |
+| `pnpm --filter @syncsketch/db db:studio` | browse the database |
 
-We welcome contributions from the community! Whether you're a developer, designer, or just have ideas to share, we encourage you to get involved.
-
-* **Report Issues:** Find and report bugs or suggest new features on our [GitHub Issues page](your-github-issues-link).
-* **Contribute Code:** Fork the repository, make your changes, and submit a pull request.
-* **Spread the Word:** Share [Your Project Name] with your friends, colleagues, and on social media.
-
-**Join the Community:**
-
-* **[Link to Discord server (if you have one)]**
-* **[Link to Twitter account (if you have one)]** 
-
-
-
-**Let's build something amazing together!**
-
-We believe that collaborative drawing tools can empower teams and individuals to be more creative and productive. Join us on this journey and help us make SyncSketch even better.
-
-**[Optional: Include a screenshot or GIF of your project in action]**
+## Deploying
+See [DEPLOY.md](DEPLOY.md). Development history is in [PLAN.md](PLAN.md) and [PROGRESS.md](PROGRESS.md).
