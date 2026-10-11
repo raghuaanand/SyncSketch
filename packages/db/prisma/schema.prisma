@@ -99,13 +99,19 @@ model Folder {
   @@map("folder")
 }
 
+enum BoardKind {
+  SKETCH
+  WHITEBOARD
+}
+
 model Board {
   id        String   @id @default(cuid())
   name      String
   ownerId   String
   // null folderId = top level
   folderId  String?
-  // { elements, appState, files } as produced by the Excalidraw API
+  kind      BoardKind @default(SKETCH)
+  // Editor snapshot: { elements, appState, files } for SKETCH, a tldraw snapshot for WHITEBOARD
   data      Json?
   thumbnail String?
   createdAt DateTime @default(now())

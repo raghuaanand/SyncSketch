@@ -6,7 +6,7 @@ import "@fontsource-variable/inter";
 import "@fontsource-variable/newsreader";
 
 export const metadata: Metadata = {
-  title: "SyncSketch",
+  title: "unfold",
   description: "A collaborative drawing canvas",
 };
 
@@ -18,7 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider defaultTheme="system" storageKey="syncsketch-ui-theme">
+        <ThemeProvider defaultTheme="system" storageKey="unfold-ui-theme">
           <QueryProvider>{children}</QueryProvider>
         </ThemeProvider>
       </body>

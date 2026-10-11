@@ -20,6 +20,8 @@ type Props = {
   submitLabel: string;
   initialName?: string;
   onSubmit: (name: string) => Promise<unknown>;
+  // Extra form fields rendered under the name input.
+  children?: React.ReactNode;
 };
 
 export function NameDialog({
@@ -30,6 +32,7 @@ export function NameDialog({
   submitLabel,
   initialName = "",
   onSubmit,
+  children,
 }: Props) {
   const [name, setName] = useState(initialName);
   const [error, setError] = useState<string>();
@@ -73,6 +76,7 @@ export function NameDialog({
             aria-label="Name"
             autoFocus
           />
+          {children}
           {error && (
             <p role="alert" className="text-sm text-destructive">
               {error}

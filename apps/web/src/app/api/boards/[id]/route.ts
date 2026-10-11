@@ -1,5 +1,6 @@
-import { Prisma, prisma } from "@syncsketch/db";
+import { Prisma, prisma } from "@unfold/db";
 import { assertOwnedFolder } from "@/lib/api/folders";
+import { boardSelect } from "@/lib/api/boards";
 import { handle, notFound, parseBody } from "@/lib/api/http";
 import { updateBoard } from "@/lib/api/schemas";
 import { requireUser } from "@/lib/session";
@@ -34,7 +35,7 @@ export const PATCH = handle(async (request: Request, { params }: Ctx) => {
       folderId: input.folderId,
       data: input.data as Prisma.InputJsonValue | undefined,
     },
-    select: { id: true, name: true, folderId: true, createdAt: true, updatedAt: true },
+    select: boardSelect,
   });
   return Response.json(board);
 });

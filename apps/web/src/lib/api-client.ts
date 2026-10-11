@@ -1,3 +1,5 @@
+import type { BoardKind } from "@/lib/board-kinds";
+
 export type FolderItem = {
   id: string;
   name: string;
@@ -9,8 +11,8 @@ export type FolderItem = {
 export type BoardItem = {
   id: string;
   name: string;
+  kind: BoardKind;
   folderId: string | null;
-  thumbnail: string | null;
   createdAt: string;
   updatedAt: string;
 };
@@ -21,13 +23,10 @@ export type Items = {
   boards: BoardItem[];
 };
 
-export type SceneData = {
-  elements: unknown[];
-  appState: Record<string, unknown>;
-  files: Record<string, unknown>;
-};
+// Editor snapshot; its shape depends on the board kind.
+export type BoardData = Record<string, unknown>;
 
-export type Board = BoardItem & { data: SceneData | null };
+export type Board = BoardItem & { data: BoardData | null };
 
 export class ApiError extends Error {
   constructor(
@@ -63,12 +62,12 @@ export const api = {
   updateFolder: (id: string, patch: { name?: string; parentId?: string | null }) =>
     request<FolderItem>(`/api/folders/${id}`, send("PATCH", patch)),
   deleteFolder: (id: string) => request<void>(`/api/folders/${id}`, send("DELETE")),
-  createBoard: (name: string, folderId: string | null) =>
-    request<BoardItem>("/api/boards", send("POST", { name, folderId })),
+  createBoard: (name: string, folderId: string | null, kind: BoardKind) =>
+    request<BoardItem>("/api/boards", send("POST", { name, folderId, kind })),
   getBoard: (id: string) => request<Board>(`/api/boards/${id}`),
   updateBoard: (
     id: string,
-    patch: { name?: string; folderId?: string | null; data?: SceneData },
+    patch: { name?: string; folderId?: string | null; data?: BoardData },
     init?: RequestInit,
   ) => request<BoardItem>(`/api/boards/${id}`, { ...send("PATCH", patch), ...init }),
   duplicateBoard: (id: string) =>

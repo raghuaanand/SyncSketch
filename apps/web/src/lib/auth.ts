@@ -1,4 +1,4 @@
-import { prisma } from "@syncsketch/db";
+import { prisma } from "@unfold/db";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { nextCookies } from "better-auth/next-js";
@@ -47,6 +47,10 @@ export const auth = betterAuth({
     accountLinking: { enabled: true, trustedProviders: ["google"] },
   },
 
+  // Sign the session into a short-lived cookie so most API calls skip the
+  // database lookup (a round trip to a remote Postgres on every request).
+  session: { cookieCache: { enabled: true, maxAge: 5 * 60 } },
+
   rateLimit: { enabled: true, storage: "database" },
 
   plugins: [
@@ -66,7 +70,7 @@ export const auth = betterAuth({
         const minutes = OTP_EXPIRES_IN_SECONDS / 60;
         await sendEmail({
           to: email,
-          subject: `${otp} is your SyncSketch code`,
+          subject: `${otp} is your unfold code`,
           text: `Use this code to ${purpose}: ${otp}\n\nIt expires in ${minutes} minutes. If you didn't request it, ignore this email.`,
           html: `<p>Use this code to ${purpose}:</p><p style="font-size:28px;font-weight:700;letter-spacing:6px">${otp}</p><p>It expires in ${minutes} minutes. If you didn't request it, ignore this email.</p>`,
         });

@@ -1,24 +1,24 @@
-import { prisma } from "@syncsketch/db";
+import { prisma } from "@unfold/db";
 import { HttpError, notFound } from "./http";
 
 const MAX_DEPTH = 100;
 
-// Folder ids from the root down to (and including) `folderId`, owner-scoped.
+// Folders from the root down to (and including) `folderId`, owner-scoped.
+// A single recursive query: one round trip however deep the folder is.
 export async function folderPath(ownerId: string, folderId: string) {
-  const path: { id: string; name: string }[] = [];
-  let currentId: string | null = folderId;
-  while (currentId) {
-    if (path.length >= MAX_DEPTH) throw new HttpError(400, "Folders nested too deeply");
-    const found: { id: string; name: string; parentId: string | null } | null =
-      await prisma.folder.findFirst({
-        where: { id: currentId, ownerId },
-        select: { id: true, name: true, parentId: true },
-      });
-    if (!found) throw notFound();
-    path.unshift({ id: found.id, name: found.name });
-    currentId = found.parentId;
-  }
-  return path;
+  const rows = await prisma.$queryRaw<{ id: string; name: string }[]>`
+    WITH RECURSIVE ancestors AS (
+      SELECT id, name, "parentId", 1 AS depth
+      FROM folder WHERE id = ${folderId} AND "ownerId" = ${ownerId}
+      UNION ALL
+      SELECT f.id, f.name, f."parentId", a.depth + 1
+      FROM folder f JOIN ancestors a ON f.id = a."parentId"
+      WHERE f."ownerId" = ${ownerId} AND a.depth < ${MAX_DEPTH}
+    )
+    SELECT id, name FROM ancestors ORDER BY depth DESC`;
+  if (rows.length === 0) throw notFound();
+  if (rows.length >= MAX_DEPTH) throw new HttpError(400, "Folders nested too deeply");
+  return rows;
 }
 
 // 404 unless the folder exists and belongs to the user. null = top level.

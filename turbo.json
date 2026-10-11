@@ -9,7 +9,8 @@
     "GOOGLE_CLIENT_ID",
     "GOOGLE_CLIENT_SECRET",
     "RESEND_API_KEY",
-    "EMAIL_FROM"
+    "EMAIL_FROM",
+    "NEXT_PUBLIC_TLDRAW_LICENSE_KEY"
   ],
   "tasks": {
     "build": {

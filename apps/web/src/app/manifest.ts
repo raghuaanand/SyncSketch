@@ -3,8 +3,8 @@ import type { MetadataRoute } from "next";
 export default function manifest(): MetadataRoute.Manifest {
   return {
     id: "/",
-    name: "SyncSketch",
-    short_name: "SyncSketch",
+    name: "unfold",
+    short_name: "unfold",
     description: "A collaborative drawing canvas",
     start_url: "/",
     scope: "/",

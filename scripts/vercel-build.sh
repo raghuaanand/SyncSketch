@@ -6,7 +6,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 if [ "${VERCEL_ENV:-}" = "production" ]; then
-  pnpm --filter @syncsketch/db db:deploy
+  pnpm --filter @unfold/db db:deploy
 fi
 
 pnpm turbo build --filter=web

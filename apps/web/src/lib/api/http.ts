@@ -1,4 +1,4 @@
-import { Prisma } from "@syncsketch/db";
+import { Prisma } from "@unfold/db";
 import { ZodError, ZodType } from "zod";
 
 // Vercel functions reject request bodies above 4.5 MB.

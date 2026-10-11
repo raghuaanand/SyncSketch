@@ -1,14 +1,15 @@
 "use client";
 
-import dynamic from "next/dynamic";
-
-// Excalidraw touches `window`, so it must only render on the client.
-const Editor = dynamic(() => import("@/components/Editor"), { ssr: false });
+import { useParams } from "next/navigation";
+import { BoardEditor } from "@/components/editors";
+import { ScreenMessage } from "@/components/editors/screen-message";
+import { useBoard } from "@/lib/queries";
 
 export default function BoardPage() {
-  return (
-    <div className="h-screen">
-      <Editor />
-    </div>
-  );
+  const { boardId } = useParams<{ boardId: string }>();
+  const { data: board, error } = useBoard(boardId);
+
+  if (error) return <ScreenMessage>{error.message}</ScreenMessage>;
+  if (!board) return <ScreenMessage pulse>Opening your board</ScreenMessage>;
+  return <BoardEditor board={board} />;
 }

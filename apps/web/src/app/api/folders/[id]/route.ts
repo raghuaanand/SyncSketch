@@ -1,4 +1,4 @@
-import { prisma } from "@syncsketch/db";
+import { prisma } from "@unfold/db";
 import { assertNoCycle, assertOwnedFolder, folderPath } from "@/lib/api/folders";
 import { handle, notFound, parseBody } from "@/lib/api/http";
 import { updateFolder } from "@/lib/api/schemas";

@@ -17,7 +17,8 @@ import { useState } from "react";
 import { NameDialog } from "@/components/name-dialog";
 import { useTheme } from "@/components/theme-provider";
 import { Wordmark } from "@/components/logo";
-import { BoardTile, FolderTile, type View } from "@/components/tiles";
+import { NewBoardDialog } from "@/components/new-board-dialog";
+import { BoardTile, FolderTile, ListHeader, type View } from "@/components/tiles";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormError } from "@/components/auth/auth-shell";
@@ -33,28 +34,22 @@ export function Dashboard({ parentId }: { parentId: string | null }) {
   const createFolder = useCreateFolder();
   const createBoard = useCreateBoard();
   const [search, setSearch] = useState("");
-  const [view, setView] = useState<View>("grid");
+  // Folders read like a file listing; the top level stays a gallery.
+  const [view, setView] = useState<View>(parentId ? "list" : "grid");
   const [dialog, setDialog] = useState<"folder" | "board" | null>(null);
 
   const q = search.toLowerCase();
   const folders = data?.folders.filter((f) => f.name.toLowerCase().includes(q)) ?? [];
   const boards = data?.boards.filter((b) => b.name.toLowerCase().includes(q)) ?? [];
   const isEmpty = !!data && data.folders.length === 0 && data.boards.length === 0;
-  const boardLayout =
-    view === "grid"
-      ? "grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-      : "flex flex-col gap-2";
-  const folderLayout =
-    view === "grid"
-      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
-      : "flex flex-col gap-2";
+  const hasResults = folders.length > 0 || boards.length > 0;
   const title = data?.path.length ? data.path[data.path.length - 1].name : "All boards";
 
   return (
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b bg-background/90 backdrop-blur">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-          <Link href="/" aria-label="SyncSketch home">
+          <Link href="/" aria-label="unfold home">
             <Wordmark />
           </Link>
           <div className="flex items-center gap-1">
@@ -145,7 +140,7 @@ export function Dashboard({ parentId }: { parentId: string | null }) {
           </div>
         )}
         {isLoading && (
-          <div className={boardLayout}>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
               <SkeletonCard key={i} />
             ))}
@@ -165,27 +160,40 @@ export function Dashboard({ parentId }: { parentId: string | null }) {
             </Button>
           </div>
         )}
-        {folders.length > 0 && (
+        {view === "list" && hasResults && (
+          <div className="overflow-hidden rounded-xl border bg-card">
+            <ListHeader />
+            <div className="divide-y">
+              {folders.map((f) => (
+                <FolderTile key={f.id} folder={f} view="list" />
+              ))}
+              {boards.map((b) => (
+                <BoardTile key={b.id} board={b} view="list" />
+              ))}
+            </div>
+          </div>
+        )}
+        {view === "grid" && folders.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Folders</h2>
-            <div className={folderLayout}>
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {folders.map((f) => (
-                <FolderTile key={f.id} folder={f} view={view} />
+                <FolderTile key={f.id} folder={f} view="grid" />
               ))}
             </div>
           </section>
         )}
-        {boards.length > 0 && (
+        {view === "grid" && boards.length > 0 && (
           <section className="space-y-3">
             <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Boards</h2>
-            <div className={boardLayout}>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {boards.map((b) => (
-                <BoardTile key={b.id} board={b} view={view} />
+                <BoardTile key={b.id} board={b} view="grid" />
               ))}
             </div>
           </section>
         )}
-        {data && !isEmpty && folders.length === 0 && boards.length === 0 && (
+        {data && !isEmpty && !hasResults && (
           <p className="py-12 text-center text-muted-foreground">Nothing matches your search.</p>
         )}
       </main>
@@ -197,13 +205,11 @@ export function Dashboard({ parentId }: { parentId: string | null }) {
         submitLabel="Create folder"
         onSubmit={(name) => createFolder.mutateAsync({ name, parentId })}
       />
-      <NameDialog
+      <NewBoardDialog
         open={dialog === "board"}
         onOpenChange={(open) => !open && setDialog(null)}
-        title="New board"
-        submitLabel="Create board"
-        onSubmit={async (name) => {
-          const board = await createBoard.mutateAsync({ name, folderId: parentId });
+        onCreate={async (name, kind) => {
+          const board = await createBoard.mutateAsync({ name, kind, folderId: parentId });
           router.push(`/board/${board.id}`);
         }}
       />

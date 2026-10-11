@@ -1,4 +1,5 @@
-import { Prisma, prisma } from "@syncsketch/db";
+import { Prisma, prisma } from "@unfold/db";
+import { boardSelect } from "@/lib/api/boards";
 import { handle, notFound } from "@/lib/api/http";
 import { requireUser } from "@/lib/session";
 
@@ -13,12 +14,13 @@ export const POST = handle(
     const copy = await prisma.board.create({
       data: {
         name: `${source.name} (copy)`.slice(0, 100),
+        kind: source.kind,
         ownerId: user.id,
         folderId: source.folderId,
         data: (source.data ?? undefined) as Prisma.InputJsonValue | undefined,
         thumbnail: source.thumbnail,
       },
-      select: { id: true, name: true, folderId: true, createdAt: true, updatedAt: true },
+      select: boardSelect,
     });
     return Response.json(copy, { status: 201 });
   },

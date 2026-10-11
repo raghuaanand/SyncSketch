@@ -18,7 +18,7 @@ export async function sendEmail({ to, subject, text, html }: Email) {
 
   resend ??= new Resend(apiKey);
   const { error } = await resend.emails.send({
-    from: process.env.EMAIL_FROM ?? "SyncSketch <onboarding@resend.dev>",
+    from: process.env.EMAIL_FROM ?? "unfold <onboarding@resend.dev>",
     to,
     subject,
     text,
